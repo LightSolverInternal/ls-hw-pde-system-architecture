@@ -61,9 +61,108 @@ However:
 
 ---
 
+### Issue #2: Pixel Voltage Transition Behavior - Meadowlark SLM
+
+**Status:** Open - Awaiting vendor clarification  
+**Priority:** Medium  
+**Component:** Meadowlark 1024x1024 SLM Hardware  
+**Date Raised:** March 26, 2026
+
+**Question:**
+During image updates, do pixel voltages transition directly from the old value to the new value, or do they reset to 0V (or another intermediate state) before settling to the target voltage?
+
+**Context:**
+When updating a pixel value from one image to the next (e.g., from value A in IMG1 to value B in IMG2):
+- The datasheet documents the 0.696ms loading time
+- The double-buffering mechanism is explained
+- However, the physical voltage transition behavior at the pixel level is not documented
+
+**Possible Behaviors:**
+1. **Direct transition:** VA → VB (most likely for analog pixel addressing)
+2. **Reset transition:** VA → 0V → VB (may occur if buffers are cleared)
+3. **Other intermediate state:** VA → Vx → VB
+
+**Impact on System:**
+- Important for synchronization with measurement equipment
+- May affect optical performance during transitions
+- Could influence minimum settling time requirements
+
+**Question for Meadowlark:**
+During image updates, do pixel voltages transition directly from the old value to the new value, or do they reset to 0V (or another intermediate state) before settling to the target voltage?
+
+**Related Documentation:**
+- [docs/SLM_Timing_Reference.md](docs/SLM_Timing_Reference.md) - Section on pixel loading
+- PCIe User Manual (1024x1024) - Section 1.2 (Phase Modulation)
+
+**Action Items:**
+- [ ] Contact Meadowlark technical support
+- [ ] Update documentation with confirmed behavior
+- [ ] Assess impact on synchronization requirements
+
+---
+
+### Issue #3: Multiple Trigger Handling Behavior - Meadowlark SLM
+
+**Status:** Open - Awaiting vendor clarification  
+**Priority:** Medium  
+**Component:** Meadowlark 1024x1024 SLM External Trigger Mode  
+**Date Raised:** March 26, 2026
+
+**Question:**
+If multiple external triggers arrive between `Write_image()` returning and `ImageWriteComplete()` returning, what happens to the additional triggers?
+
+**Context:**
+When using external trigger mode with a continuous trigger source:
+```python
+Write_image(img)        # DMA completes (~1ms)
+# Hardware now waiting for trigger
+# Trigger 1 arrives     → Causes flip + 0.696ms loading
+# Trigger 2 arrives     → ??? (during loading)
+# Trigger 3 arrives     → ??? (during loading)
+ImageWriteComplete()    # Returns after loading complete
+```
+
+**Possible Behaviors:**
+1. **Only first trigger processed**: Subsequent triggers ignored while hardware busy (most likely)
+2. **Triggers queued**: Hardware buffers multiple triggers (unlikely given no mention in spec)
+3. **Triggers cause errors**: Multiple triggers generate error conditions
+4. **Last trigger wins**: Hardware latches most recent trigger edge
+
+**What the Spec Says:**
+- "Triggers received before a DMA is started but after ImageWriteComplete has returned will be ignored"
+- "An output pulse is generated to acknowledge receipt of **the trigger**" (singular)
+- No mention of trigger queuing, buffering, or multiple trigger handling
+
+**Impact on System:**
+- Critical for continuous trigger sources (e.g., 1kHz pulse generator)
+- Affects robustness of timing architecture
+- May need trigger gating/synchronization logic
+
+**Questions for Meadowlark:**
+1. If multiple external triggers arrive between `Write_image()` returning and `ImageWriteComplete()` returning:
+   - Does only the **first trigger** cause a memory bank flip?
+   - Are subsequent triggers ignored during the flip/loading period (0.696ms)?
+2. Regarding output pulses:
+   - Is only **one output pulse** generated (acknowledging the first trigger)?
+   - Or does the hardware generate an output pulse for each received trigger?
+3. Is there any trigger queuing or buffering mechanism in the hardware?
+4. What is the recommended practice: should external trigger sources be gated to provide exactly one trigger per `Write_image()` call?
+
+**Related Documentation:**
+- [docs/SLM_Timing_Reference.md](docs/SLM_Timing_Reference.md) - External trigger mode
+- PCIe User Manual (1024x1024), Section 3.6 (Triggering), Section 4.3.7 (ImageWriteComplete)
+
+**Action Items:**
+- [ ] Contact Meadowlark technical support
+- [ ] Test behavior with oscilloscope/logic analyzer
+- [ ] Update timing reference with confirmed behavior
+- [ ] Design trigger gating logic if needed
+
+---
+
 ## System Architecture
 
-### Issue #2: Trigger Mode Selection Logic
+### Issue #4: Trigger Mode Selection Logic
 
 **Status:** Open - Design decision needed  
 **Priority:** Medium  
@@ -99,7 +198,7 @@ When should the system use software timing vs. external hardware triggers?
 
 ## Data Management
 
-### Issue #3: Image Storage Format and Strategy
+### Issue #4: Image Storage Format and Strategy
 
 **Status:** Open - Requirements clarification needed  
 **Priority:** Medium  
@@ -133,7 +232,7 @@ What format should be used for storing captured images, and what is the retentio
 
 ## Performance & Optimization
 
-### Issue #4: GPU Memory Support in Meadowlark SDK
+### Issue #5: GPU Memory Support in Meadowlark SDK
 
 **Status:** Open - Vendor clarification needed  
 **Priority:** Medium  
@@ -176,7 +275,7 @@ Write_image(board=1, image=image_cpu.ctypes.data)
 
 ## Integration & Testing
 
-### Issue #5: Camera Synchronization Strategy - DUAL-SLM SYSTEM
+### Issue #6: Camera Synchronization Strategy - DUAL-SLM SYSTEM
 
 **Status:** ✅ RESOLVED - Dual-SLM architecture designed  
 **Priority:** High  
@@ -278,7 +377,7 @@ img1, img2 = camera_service.capture_dual()
 
 ## Future Considerations
 
-### Issue #6: Pre-loaded Sequence Mode
+### Issue #7: Pre-loaded Sequence Mode
 
 **Status:** Open - Future optimization  
 **Priority:** Low  
