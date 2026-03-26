@@ -46,10 +46,12 @@ The system architecture is guided by the following principles:
                                  │
     ┌────────────────────────────┼────────────────────────────┐
     │                            │                            │
-┌───┴────────────┐    ┌──────────┴──────────┐    ┌──────────┴──────────┐
-│  SLM Service   │    │  Camera Service     │    │  Laser Driver       │
-│  (Meadowlark)  │    │  (Allied Vision)    │    │  Service (MQTT)     │
-└────────────────┘    └─────────────────────┘    └─────────────────────┘
+┌───┴────────┐ ┌────────────┐   │   ┌────────────────────┐   │   ┌──────────────────┐
+│SLM1 Service│ │SLM2 Service│   │   │  Camera Service    │   │   │  Laser Driver    │
+│(Meadowlark)│ │(Meadowlark)│   │   │ (2x Cameras via    │   │   │  Service (MQTT)  │
+│            │ │            │   │   │  Frame Grabber)    │   │   │                  │
+└────────────┘ └────────────┘   │   └────────────────────┘   │   └──────────────────┘
+                                 │
 
 ┌─────────────────┐   ┌──────────────────────┐   ┌────────────────────┐
 │ TEC Controllers │   │  PID Controllers     │   │  Temp Sensors      │
@@ -58,7 +60,9 @@ The system architecture is guided by the following principles:
 
 ┌─────────────────┐   ┌──────────────────────┐
 │  Picomotor      │   │  Timing/Trigger HW   │
-│  Controller     │   │  (TBD)               │
+│  Controller     │   │  (1kHz Pulse Gen +   │
+│                 │   │   0.7ms Delay +      │
+│                 │   │   BNC Splitter)      │
 └─────────────────┘   └──────────────────────┘
 ```
 
@@ -69,29 +73,182 @@ The system architecture is guided by the following principles:
 ### 3.1 Data Path Subsystem
 
 **Purpose:**  
-Manages the flow of image data to the SLM and from the camera.
+Manages the flow of image data to the SLMs and from the cameras.
+
+**System Configuration:**
+- **2 SLMs** (Meadowlark 1024x1024 PCIe) – display independent phase patterns
+- **2 Cameras** (Allied Vision Prosilica GT 5120NIR) – capture SLM images simultaneously
+- **1 Frame Grabber** (Coaxlink Quad CXP-12) – interfaces both cameras
+- **1 kHz Pulse Generator** – triggers both SLMs
+- **Programmable Delay Circuit** (0.7ms) – delays SLM2 output to camera triggers
+- **BNC T-Connector** – splits delayed trigger to both cameras
 
 **Responsibilities:**
-- Upload phase patterns (image sequences) to SLM
-- Capture image sequences from camera
-- Coordinate synchronization between SLM and camera
-- Support multiple triggering modes
+- Upload independent phase patterns to both SLMs
+- Capture synchronized images from both cameras
+- Coordinate timing: SLM updates → pixel settling → camera capture
+- Ensure both SLM images are settled before camera capture
 
 **Key Components:**
-- **SLM Service** – wraps Meadowlark PCIe driver, provides stateless API
-- **Camera Service** – wraps Allied Vision camera + frame grabber, provides stateless API
-- **Display Server** – sends images to SLM (existing component, adapted)
-- **Capture Server** – receives images from camera (existing component, adapted)
+- **SLM1 Service** – wraps Meadowlark PCIe driver for SLM #1
+- **SLM2 Service** – wraps Meadowlark PCIe driver for SLM #2
+- **Camera Service** – wraps frame grabber (eGrabber SDK), manages both cameras
+- **Display Servers** – send images to SLM1 and SLM2 (existing components, adapted)
+- **Capture Server** – receives images from both cameras (existing component, adapted)
 
 **API (Stateless):**
-- `upload_sequence(images: list, mode: TriggerMode)`
-- `capture_sequence(num_frames: int, mode: TriggerMode)`
-- `set_trigger_mode(mode: TriggerMode)`
+- `slm1.upload_image(image, wait_for_trigger=True)`
+- `slm2.upload_image(image, wait_for_trigger=True)`
+- `camera_service.capture_dual(timeout_ms)`
+- `set_output_pulse(slm_id, enabled)`
 
-**Trigger Modes:**
-1. **SLM triggers Camera** – SLM output pulse triggers camera exposure
-2. **Camera triggers SLM** – Camera readout triggers SLM update
-3. **External Trigger Controller** – dedicated timing hardware triggers both
+**Trigger Architecture:**
+
+```
+1 kHz Pulse Generator (1ms period)
+       │
+       ├──────────────────────┬──────────────────────┐
+       │                      │                      │
+       ↓                      ↓                      │
+   SLM1 Trigger          SLM2 Trigger               │
+   (no output)           (output enabled)           │
+       │                      │                      │
+   [Flip + Settle]       [Flip + Settle]            │
+   (0.696ms min)         (0.696ms min)              │
+                              │                      │
+                         Output Pulse                │
+                          (200µs)                    │
+                              │                      │
+                              ↓                      │
+                      Delay Circuit                  │
+                        (0.7ms)                      │
+                              │                      │
+                              ↓                      │
+                      BNC T-Connector                │
+                         ↙        ↘                  │
+                   Camera1      Camera2              │
+                   [Capture]    [Capture]            │
+                                                      │
+       Next pulse (t+1ms) ←───────────────────────────┘
+```
+
+**Timing Guarantees (Worst Case):**
+- SLM1 triggered at t=0ms, settled by t=0.696ms
+- SLM2 triggered at t=1ms (next pulse), settled by t=1.696ms
+- Cameras triggered at t=1.7ms (1ms + 0.7ms delay)
+- At camera trigger time:
+  - SLM1 image: settled for 1.7ms ✅ (extra margin)
+  - SLM2 image: settled for 0.7ms ✅ (just over 0.696ms minimum)
+  - Both cameras capture simultaneously ✅
+
+**GPU Memory Workflow:**
+
+The system leverages GPU memory throughout the data path to maximize performance:
+
+```
+┌────────────────────────────────────────────────────────┐
+│                    NVIDIA GPU Memory                   │
+│                                                        │
+│  ┌──────────────────────┐    ┌────────────────────┐  │
+│  │  Phase Patterns      │    │  Captured Images   │  │
+│  │  Generation (CUDA)   │    │  (from Cameras)    │  │
+│  │  - SLM1 pattern      │    │  - Camera1 image   │  │
+│  │  - SLM2 pattern      │    │  - Camera2 image   │  │
+│  └───────┬──────────────┘    └─────────▲──────────┘  │
+│          │                              │             │
+│          │ GPU-GPU Processing           │             │
+│          │ (no CPU copy)                │             │
+│          └──────────►───────────────────┘             │
+│                                                        │
+└──────────┼──────────┬───────────────────┼─────┬───────┘
+           │          │                   │     │
+           │ DMA      │ DMA               │ DMA │ DMA  
+           ↓          ↓                   ↑     ↑
+    ┌──────┴───┐  ┌──┴───────┐    ┌──────┴─────┴─────┐
+    │ SLM1 PCIe│  │ SLM2 PCIe│    │  Frame Grabber   │
+    │(Meadowlk)│  │(Meadowlk)│    │   (Coaxlink)     │
+    └──────┬───┘  └──┬───────┘    └─────┬────┬───────┘
+           │         │                   │    │
+           ↓         ↓                   ↑    ↑
+    ┌──────┴───┐  ┌──┴───────┐    ┌─────┴──┐ │
+    │   SLM1   │  │   SLM2   │    │Camera1 │ │
+    │ Display  │  │ Display  │    │        │ │
+    │1024x1024 │  │1024x1024 │    │        │ │
+    └──────────┘  └──────────┘    └────────┘ │
+                                   ┌──────────┴┐
+                                   │  Camera2  │
+                                   │           │
+                                   │           │
+                                   └───────────┘
+```
+
+**Benefits:**
+- **Zero-copy architecture** – images generated and captured directly in GPU memory
+- **Low latency** – no CPU memory transfers in critical path
+- **High throughput** – GPU-GPU processing for feedback loops
+- **Reduced CPU load** – CPU free for orchestration and control tasks
+
+**Hardware Support:**
+- **SLM:** Meadowlark SDK supports GPU memory pointers (verification needed - see OPEN_ISSUES.md #4)
+- **Frame Grabber:** Coaxlink Quad CXP-12 supports NVIDIA CUDA Direct GPU Transfer
+- **GPU:** NVIDIA GPU with CUDA capability (required by SLM)
+
+**Implementation - Dual-SLM Operation:**
+```python
+import cupy as cp  # CUDA arrays in GPU memory
+
+# One-time setup
+slm1.load_lut()
+slm1.set_wait_for_trigger(True)   # External trigger mode
+slm1.set_output_pulse(False)      # Silent flip (no output pulse)
+
+slm2.load_lut()
+slm2.set_wait_for_trigger(True)   # External trigger mode
+slm2.set_output_pulse(True)       # Generates output pulse for cameras
+
+# Main loop
+for iteration in range(num_frames):
+    # Generate phase patterns on GPU
+    pattern1 = generate_phase_cuda_slm1()  # CuPy array
+    pattern2 = generate_phase_cuda_slm2()  # CuPy array
+    
+    # Upload to both SLMs (DMA: GPU → SLM, ~1ms each)
+    slm1.write_image(pattern1)
+    slm2.write_image(pattern2)
+    
+    # Block until both DMAs complete
+    success1 = slm1.ImageWriteComplete(timeout_ms=5000)
+    success2 = slm2.ImageWriteComplete(timeout_ms=5000)
+    
+    if not (success1 and success2):
+        handle_timeout_error()
+        break
+    
+    # Both SLMs now waiting for 1kHz pulse generator triggers
+    # Worst case: SLM1 triggered at t=0, SLM2 at t=1ms
+    # Cameras triggered at t=1.7ms (after 0.7ms delay from SLM2 output)
+    
+    # Capture from both cameras simultaneously (DMA: Camera → GPU)
+    img1, img2 = camera_service.capture_dual_to_gpu(timeout_ms=100)
+    
+    # Process on GPU (no CPU copies) - feedback loop
+    processed = process_dual_feedback_cuda(img1, img2)
+    
+    # Use results for next iteration (stays on GPU)
+    # ... feedback computation for next patterns ...
+
+```
+
+**Timing Characteristics:**
+- DMA upload time: ~1ms per SLM (parallel execution possible)
+- Worst-case settling: SLM1 = 1.7ms, SLM2 = 0.7ms (both > 0.696ms minimum)
+- Camera capture: synchronized, triggered after both SLMs settled
+- Frame rate: Limited by slowest component (camera capture + processing)
+
+**Performance Impact:**
+- Eliminates GPU↔CPU memory copies (~10-50ms overhead for large images)
+- Enables sustained 1000 fps operation with processing
+- Critical for real-time feedback loops during calibration and operation
 
 ### 3.2 Control Path Subsystem
 
@@ -184,12 +341,22 @@ Coordinates high-level workflows and provides unified API to application layer.
 
 ### 4.1 Optical Components
 
-| Component | Model | Function | Interface |
-|-----------|-------|----------|-----------|
-| SLM | Meadowlark XY Phase 1024x1024 | Phase modulation | PCIe (software driver) |
-| Camera | Allied Vision Prosilica GT 5120NIR | Image capture | Frame grabber (PCIe) |
+| Component | Model | Quantity | Function | Interface |
+|-----------|-------|----------|----------|-----------|  
+| SLM | Meadowlark XY Phase 1024x1024 | 2 | Phase modulation (independent patterns) | PCIe (software driver) |
+| Camera | Allied Vision Prosilica GT 5120NIR | 2 | Image capture (synchronized) | CoaXPress (CXP-12) |
+| Frame Grabber | Coaxlink Quad CXP-12 Value | 1 | Dual camera interface, triggering | PCIe 3.0 x8, 20 digital I/O, 4x CXP ports |
+| Pulse Generator | 1 kHz TTL | 1 | Triggers both SLMs | TTL output to SLM trigger inputs |
+| Delay Circuit | Programmable delay | 1 | 0.7ms delay for camera triggers | Input: SLM2 output, Output: TTL to cameras |
 | Laser Diode | DILAS MMF-IS11 | Pump source (IR) | Laser driver (analog) |
 | Gain Crystal | TBD | Laser emission | N/A |
+
+**Frame Grabber Capabilities:**
+- 4x CoaXPress CXP-12 connections (5,000 MB/s camera bandwidth)
+- 20 digital I/O lines (differential, TTL, isolated inputs/outputs)
+- Programmable trigger modes (area-scan and line-scan)
+- I/O Toolbox with configurable delays and filtering
+- Potential for programmable trigger delay (needs investigation)
 
 ### 4.2 Control & Conditioning Hardware
 
