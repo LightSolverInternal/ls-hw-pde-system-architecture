@@ -1,0 +1,59 @@
+@startuml
+title Write Image and Capture Camera Flow with single Image capture
+
+actor User
+participant API
+
+box "SLM T" #LightGray
+participant "MEM" as slmT1
+participant "HW" as slmT2
+end box
+
+box "SLM R" #LightSlateGray
+participant "MEM" as slmR1
+participant "HW" as slmR2
+end box
+participant "Function\nGenerator" as FG
+collections Camera
+participant "Frame\nGrabber" as GRABBER
+
+
+
+== Write Image to SLM T ==
+User -> API : writeImageCaptureImage\n(*ptrT, *ptrR, *img1, *img2, Tag)
+API -> slmT1 : Write_image(*ptrT)
+activate slmT1
+note right of slmT1 : DMA\n(1.5ms)
+slmT1 --> API : return    
+deactivate slmT1
+slmT1 -> slmT2 : flip start
+activate slmT2
+API -> slmT1 :ImageWriteComplete()
+note right of slmT2 : Flip\n(0.7ms)
+slmT1 --> API : done
+deactivate slmT2
+
+
+==write image to SLM R==
+API -> slmR1 : Write_image(*ptrR)
+activate slmR1
+note right of slmR1 : DMA\n(1.5ms)
+slmR1 --> API : return    
+deactivate slmR1
+par
+slmR1 -> slmR2  : flip start
+activate slmR2
+slmR2 -> FG : trigger
+activate FG
+note right of FG : Programmable Delay\nT[msec]\n(0.7ms settling time)
+== Capture Camera ==
+FG -> Camera : trigger
+Camera -> GRABBER : capture img1,img2
+deactivate slmR2
+||15||    
+deactivate FG
+
+GRABBER -> API : NEW_BUFFER_EVENT()
+API --> User : return(Tag)
+
+@enduml
