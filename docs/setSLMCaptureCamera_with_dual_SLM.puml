@@ -54,13 +54,16 @@ activate SLMR_HW
 SLM --> Worker : DMA complete
 deactivate SLM
 
-SLMR_HW -> SLMR_HW : pixel flip\n+ settling\n(~1ms)
-
-note right of PDE : State: Second_SLM_write\n→ Capture
 
 == Hardware Trigger from SLM ==
 SLMR_HW -> Cam1 : **Hardware Trigger Pulse**\n(from SLM R output)
 SLMR_HW -> Cam2 : **Hardware Trigger Pulse**\n(from SLM R output)
+
+note right of PDE : State: Second_SLM_write\n→ Capture
+
+SLMR_HW -> SLMR_HW : pixel flip\n+ settling\n(~1ms)
+SLMR_HW -[hidden]> SLMR_HW : pixel flip\n+ settling\n(~1ms)
+
 deactivate SLMR_HW
 
 note right of Cam1 : Built-in delay\nconfigured via\nsetTriggerDelay()
