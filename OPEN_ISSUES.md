@@ -375,6 +375,88 @@ img1, img2 = camera_service.capture_dual()
 
 ---
 
+## Test Requirements
+
+### Test #1: Buffer Pool Exhaustion Behavior
+
+**Status:** Open - Needs Implementation  
+**Priority:** High  
+**Component:** Camera DMA Buffer Management  
+**Date Raised:** June 10, 2026
+
+**Test Objective:**
+Verify system behavior when attempting to capture N+1 frames when only N DMA buffers are allocated.
+
+**Background:**
+The camera acquisition system allocates N DMA buffers during `acquisitionStart()`. Each `grabFrameZeroCopy()` locks one buffer from the pool. Buffers are only released back to the pool when the Frame object is destroyed (RAII pattern).
+
+**Critical Question:**
+What happens when the application tries to grab frame N+1 without releasing any previous frames?
+
+**Expected Behaviors (to verify):**
+1. **Blocking:** `grabFrameZeroCopy()` blocks until a buffer is available
+2. **Timeout:** Call fails with timeout error after configurable duration
+3. **Immediate Error:** Call returns error immediately (EAGAIN/EWOULDBLOCK)
+4. **Frame Drop:** SDK drops the incoming frame and logs warning
+
+**Test Procedure:**
+```cpp
+// Allocate pool of N buffers
+camera.startAcquisition(N);  // e.g., N=10
+
+// Grab N frames without releasing
+std::vector<Frame> frames;
+for (int i = 0; i < N; i++) {
+    frames.push_back(camera.grabFrameZeroCopy());
+    // Verify: should succeed
+}
+
+// Attempt to grab frame N+1 (pool exhausted)
+auto start = std::chrono::steady_clock::now();
+try {
+    Frame frame_n_plus_1 = camera.grabFrameZeroCopy();
+    // Document: Did it succeed? Block? Timeout?
+} catch (const std::exception& e) {
+    auto elapsed = std::chrono::steady_clock::now() - start;
+    // Document: Error type, timeout duration
+}
+
+// Release one frame and retry
+frames.pop_back();  // Frame destroyed, buffer returned to pool
+
+try {
+    Frame frame_n_plus_1 = camera.grabFrameZeroCopy();
+    // Verify: Should now succeed
+} catch (const std::exception& e) {
+    // Document: unexpected failure
+}
+```
+
+**Success Criteria:**
+1. Behavior is documented and deterministic
+2. No system crashes or undefined behavior
+3. Buffer accounting remains accurate (no leaks)
+4. Frame sequence numbers remain consistent
+5. Clear error messages if applicable
+
+**SDK Documentation Reference:**
+- Euresys eGrabber API: `grabFrameZeroCopy()` behavior under buffer exhaustion
+- ScopedBuffer lifecycle and pool management
+
+**Action Items:**
+- [ ] Implement test case in test suite
+- [ ] Run test with N=10, N=50, N=100
+- [ ] Verify with Memento Event Logging Tool
+- [ ] Document actual behavior in implementation guide
+- [ ] Add error handling recommendations to API docs
+
+**Related:**
+- Frame class (RAII ownership transfer)
+- Camera::startAcquisition() buffer pool allocation
+- Application backpressure handling strategy
+
+---
+
 ## Future Considerations
 
 ### Issue #7: Pre-loaded Sequence Mode
@@ -438,4 +520,4 @@ The datasheet mentions (Section 4.3.11) that firmware rev 2.4+ supports:
 
 ---
 
-**Last Updated:** March 25, 2026
+**Last Updated:** June 10, 2026

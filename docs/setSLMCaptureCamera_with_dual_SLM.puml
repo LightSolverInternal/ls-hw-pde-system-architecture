@@ -1,0 +1,123 @@
+@startuml
+title PDE Physical Chain - Dual SLM/Camera Capture Sequence
+
+actor "Application" as App
+participant "PDEPhysicalChain\n(Main Thread)" as PDE
+participant "Worker\nThread" as Worker
+participant "SLMController\n(Singleton)" as SLM
+box "Hardware" #LightBlue
+participant "SLM T\nHardware" as SLMT_HW
+participant "SLM R\nHardware" as SLMR_HW
+end box
+participant "Camera 1" as Cam1
+participant "Camera 2" as Cam2
+participant "Frame Grabber\n(DMA Pool)" as DMA
+participant "Frame\n(RAII)" as Frame
+
+note over PDE : State: Ready\n(acquisition started,\nDMA buffers allocated)
+
+== Capture Request ==
+App -> PDE : setSLMCaptureCamera\n(slm_t_data, slm_r_data)
+activate PDE
+note right of PDE : State: Ready → First_SLM_write
+
+PDE -> Worker : executeOnWorker\n(lambda with SDK calls)
+activate Worker
+note right of Worker : All SDK access\nserialized here\n(SDKs not thread-safe)
+
+== Write First SLM (Transmission) ==
+Worker -> SLM : writeImage(SLM_T, data)
+activate SLM
+note right of SLM : PCIe DMA\n(~1ms)
+SLM -> SLMT_HW : DMA transfer
+activate SLMT_HW
+SLM --> Worker : DMA complete
+deactivate SLM
+
+Worker -> SLM : ImageWriteComplete(SLM_T)
+activate SLM
+note right of SLM : **CRITICAL**: Wait for\nSLM_T to stabilize\n(prevents race condition)
+SLMT_HW -> SLMT_HW : pixel flip\n+ settling\n(~1ms)
+SLMT_HW --> SLM : stable
+SLM --> Worker : image stable
+deactivate SLM
+deactivate SLMT_HW
+
+note right of PDE : State: First_SLM_write\n→ Second_SLM_write
+
+== Write Second SLM (Reflection) ==
+Worker -> SLM : writeImage(SLM_R, data)
+activate SLM
+note right of SLM : PCIe DMA\n(~1ms)
+SLM -> SLMR_HW : DMA transfer
+activate SLMR_HW
+SLM --> Worker : DMA complete
+deactivate SLM
+
+SLMR_HW -> SLMR_HW : pixel flip\n+ settling\n(~1ms)
+
+note right of PDE : State: Second_SLM_write\n→ Capture
+
+== Hardware Trigger from SLM ==
+SLMR_HW -> Cam1 : **Hardware Trigger Pulse**\n(from SLM R output)
+SLMR_HW -> Cam2 : **Hardware Trigger Pulse**\n(from SLM R output)
+deactivate SLMR_HW
+
+note right of Cam1 : Built-in delay\nconfigured via\nsetTriggerDelay()
+note right of Cam2 : Ensures both SLMs\nare fully settled
+
+== Camera Capture (Zero-Copy) ==
+Worker -> Cam1 : grabFrameZeroCopy()
+activate Cam1
+Cam1 -> DMA : capture to pool
+activate DMA
+note right of DMA : DMA to buffer\n(locks one buffer)
+DMA --> Cam1 : ScopedBuffer
+deactivate DMA
+
+Cam1 -> Frame ** : create Frame\n(unique_ptr<ScopedBuffer>)
+activate Frame
+note right of Frame : Ownership transfer:\nDMA buffer → Frame
+
+Cam1 --> Worker : Frame 1
+deactivate Cam1
+
+Worker -> Cam2 : grabFrameZeroCopy()
+activate Cam2
+Cam2 -> DMA : capture to pool
+activate DMA
+DMA --> Cam2 : ScopedBuffer
+deactivate DMA
+
+Cam2 -> Frame ** : create Frame
+Cam2 --> Worker : Frame 2
+deactivate Cam2
+
+Worker --> PDE : CaptureResult\n{camera1_frame,\ncamera2_frame}
+deactivate Worker
+
+note right of PDE : State: Capture → Ready\n(ready for next capture)
+
+PDE --> App : CaptureResult
+deactivate PDE
+
+== Frame Processing ==
+activate App
+note right of App : Application owns Frames\n(zero-copy access)
+
+App -> Frame : getData(), process()
+activate Frame
+Frame --> App : void* (DMA buffer)
+deactivate Frame
+
+note right of App : Process both images
+
+App -> App : Frames destroyed\n(go out of scope)
+deactivate App
+
+destroy Frame
+note right of Frame : RAII destructors:\nRelease buffers\nback to DMA pool
+
+note over DMA : Buffers available\nfor next capture
+
+@enduml

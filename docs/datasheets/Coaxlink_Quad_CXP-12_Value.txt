@@ -1,0 +1,782 @@
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+5/22/2024
+
+Datasheet
+
+Coaxlink Quad CXP-12 Value
+Four-connection CoaXPress CXP-12 frame grabber
+
+Four CoaXPress CXP-12 connections: 5,000 MB/s camera
+bandwidth
+PCIe 3.0 (Gen 3) x8 bus: 6,700 MB/s bus bandwidth
+Feature-rich set of 20 digital I/O lines
+Extensive camera control functions
+Memento Event Logging Tool
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+1/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Main benefits
+PCIe 3.0 (Gen 3) x8 bus
+7,800 MB/s peak bus bandwidth
+6,700 MB/s sustained bus bandwidth
+
+Compatible with eGrabber
+eGrabber Studio: eGrabber’s new interactive evaluation and demonstration
+application
+GenICam Browser: An application giving access to the GenICam features
+exposed by the GenTL Producer(s)
+GenTL Console: A command-line tool giving access to the functions and
+commands exposed by the Euresys GenTL Producer
+
+Compliant with GenICam
+Including support for:
+GenApi
+The Standard Feature Naming Convention (SFNC)
+GenTL
+
+Long cable support
+40 meters at CXP-12 speed (12.5 Gbps)
+72 meters at CXP-6 speed (6.25 Gbps)
+100 meters at CXP-3 speed (3 Gbps)
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+2/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Line-scan triggering capabilities
+Euresys’ frame grabbers offer many capabilities to synchronize line-scan or 1D
+cameras, sensors and lighting controllers. Frame grabbers can control the camera
+scanning rate based on the signals received from a motion encoder.
+They support continuous web scanning (to inspect infinite, continuously moving
+surfaces without losing a single line) and discrete object scanning (to acquire the
+image of objects moving in front of the camera).
+
+Area-scan triggering capabilities
+Euresys’ frame grabbers offer many capabilities to synchronize area-scan or 2D
+cameras, sensors and lighting controllers, for stationery or moving objects in the
+field of view, or moving cameras.
+
+Power over CoaXPress
+Feed your camera up to 17 W per channel under 24 VDC with automatic device
+detection, measurement and overload protection.
+Total and per-channel voltage and current measurement is possible, allowing
+validation and performance deviation monitoring.
+
+Use standard coaxial cables
+A single inexpensive cable for data transfer, camera control, trigger and power
+supply
+Top reliability and flexibility, performs in the harshest environments
+
+Micro-BNC (HD-BNC™) connectors for reliable connection
+Trusted push and turn, bayonet-style positive lock
+Allows for quick and easy connects and disconnects
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+3/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Memento Event Logging Tool
+Memento is an advanced development and debugging tool available for
+Coaxlink and Grablink cards.
+Memento records an accurate log of all the events related to the camera, the
+frame grabber and its driver as well as the application.
+It provides the developer with a precise timeline of time-stamped events, along
+with context information and logic analyzer view.
+It provides valuable assistance during application development and debugging,
+as well as during machine operation.
+
+Connect up to 4 cameras to a single Coaxlink card
+Connect up to 4 cameras to a single Coaxlink card
+
+Direct GPU transfer
+Sample programs for AMD DirectGMA and NVIDIA (CUDA) available.
+Direct GPU transfer eliminates unnecessary system memory copies, lowers
+CPU overhead, and reduces latency, resulting in significant performance
+improvements in data transfer times for applications.
+Direct capture of image data to GPU memory is available using AMD’s
+DirectGMA. Compatible with AMD FirePro W5x00 and above and all AMD
+FirePro S series products.
+
+High-performance DMA (Direct Memory Access)
+Direct transfer into user-allocated memory
+Hardware scatter-gather support
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+4/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+C2C-Link camera synchronization
+Allows to accurately synchronize multiple area-scan or line-scan cameras
+connected
+to the same card
+to different cards in the same PC
+to different cards in different PCs
+
+Windows, Linux and macOS drivers available
+Including support for Intel 64-bit platforms as well as ARM 64-bit platforms.
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+5/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Other benefits
+Line-scan Metadata insertion
+When activated, this feature records metadata beside image data. Line metadata
+are captured every acquired image line. Buffer metadata are only captured when
+the first image line of a buffer is acquired. The metadata are composed with a
+configurable set of general purpose event counters, quadrature encoder position
+counters and/or I/O line status. This feature allows line-scan applications to
+correlate image data with system events including motion encoder positions.
+
+Flexible line-scan camera operation with the rate converter
+The rate converter is a smart, programmable frequency multiplier/divider.
+Used with motion encoders and line-scan cameras, it allows the user to choose
+the aspect ratio of the pixels in the image.
+It provides a way to calibrate the acquisition chain to easily reach square (1:1
+aspect ratio) pixels.
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+6/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Specifications
+Mechanical
+Form factor
+PCI Express card
+
+Format
+Standard profile, half length, 8-lane PCI Express card
+
+Cooling method
+Air cooling, fan-cooled heatsink
+
+Mounting
+For insertion in a standard height, 8-lane or higher, PCI Express card slot
+
+Connectors
+'A B C D' on card bracket:
+4 x Micro-BNC 75 Ohms coaxial receptacles
+CoaXPress Host Interface
+
+'EXTERNAL I/O' on card bracket:
+26-pin 3-row high-density D-Sub female socket with UNC4-40 jack socket screws
+I/O lines and I/O power output
+
+'INTERNAL I/O 1' on printed circuit board:
+26-pin 2-row 0.1" pitch pin header with shrouding
+I/O lines and I/O power output
+
+'INTERNAL I/O 2' on printed circuit board:
+26-pin 2-row 0.1" pitch pin header with shrouding
+I/O lines and I/O power output
+
+'I/O EXTENSION' on printed circuit board:
+26-pin 2-row 0.05" pitch pin header with shrouding
+I/O extension cable socket
+
+'C2C-LINK' on printed circuit board:
+6-pin 2-row 0.1" pitch pin header with shrouding
+Card-to-card link
+
+'AUXILIARY POWER INPUT' on printed circuit board:
+6-pin PEG power socket
+12 V DC power input for PoCXP and I/O power output
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+7/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+LED indicators
+'A', 'B', 'C', 'D' on bracket:
+Bi-color red/green LEDs
+CoaXPress Host connector indicator
+
+'FPGA STATUS LAMP' on PCB:
+Bi-color red/green LED
+FPGA status indicator
+
+'BOARD STATUS LAMP' on PCB:
+Bi-color red/green LED
+Board status indicator
+
+Switches
+'RECOVERY' on PCB:
+3-pin 1-row 0.1" header or 2-way DIP switch
+Firmware emergency recovery
+
+Dimensions
+PCB L x H: 167.65 mm x 111.15 mm [6.6 in x 4.38 in]
+
+Weight
+Net weight: 187 g [6.6 oz]
+Gross weight: 287 g [10.1 oz]
+
+Host bus
+Standard
+PCI Express 3.0
+
+Link width
+8 lanes
+1 lane, 2 lanes or 4 lanes with reduced performance
+
+Link speed
+8.0 GT/s (PCIe 3.0)
+5.0 GT/s (PCIe 2.0) with reduced performance
+
+Maximum payload size
+512 bytes
+
+DMA
+32- and 64-bit
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+8/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Peak delivery bandwidth
+7,800 MB/s
+
+Effective (sustained) delivery bandwidth
+6,700 MB/s (Host PC motherboard dependent)
+
+Power consumption
+Typ. 16.7 W (3.3 W @ +3.3V, 13.4 W @ +12V), excluding camera and I/O power output
+
+Camera / video inputs
+Camera interface standard
+CoaXPress
+
+Interface standard(s)
+CoaXPress 1.0, 1.1, 1.1.1, 2.0 and 2.1
+
+Maximum link speed
+CXP-12
+
+Maximum link width
+4 connections
+
+Camera powering
+PoCXP
+
+Connectors
+Four micro-BNC 75 Ohms (also known as HD-BNC™) CXP-12
+
+Status LEDs
+One CoaXPress Host connection status LED per connection
+
+Number of cameras
+Area-scan cameras:
+One 1- or 2- or 4-connection camera
+Two 1- or 2-connection cameras
+Four 1-connection cameras
+
+Line-scan cameras:
+One 1- or 2- or 4-connection camera
+Two 1- or 2-connection cameras
+Four 1-connection cameras
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+9/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Maximum number of cameras
+4
+
+Line-scan cameras supported
+Yes
+
+Maximum aggregated camera data transfer rate
+50 Gbps (5,000 MB/s)
+
+Supported CXP down-connection speeds
+1.25 Gbps (CXP-1), 2.5 Gbps (CXP-2), 3.125 Gbps (CXP-3), 5 Gbps (CXP-5), 6.25 Gbps (CXP-6), 10.0 Gbps (CXP-10),
+and 12.5 Gbps (CXP-12)
+
+Supported CXP up-connection speeds
+Low-speed 20.83... Mbps (CXP-1 to CXP-6)
+Low-speed 41.66... Mbps (CXP-10, CXP-12)
+
+Number of CXP data streams (per camera)
+1 data stream per camera
+
+Maximum CXP stream packet size
+16,384 bytes
+
+PoCXP (Power over CoaXPress)
+PoCXP Safe Power:
+17 W of 24V DC regulated power per CoaXPress connector
+PoCXP Device detection and automatic power-on
+Overload and short-circuit protections
+On-board 12V to 24V DC/DC converter
+A +12V power source must be connected to the AUXILIARY POWER INPUT connector using a 6-pin PEG cable
+
+Camera types
+Area-scan cameras:
+Grayscale and color (YCbCr, YUV, RGB and Bayer CFA)
+Single-tap (1X-1Y) progressive-scan
+Two-tap (1X-2YE) on two distinct data streams ( '1-camera' firmware variant only)
+
+Line-scan cameras and contact imaging sensors:
+Grayscale and color RGB
+
+Camera pixel formats supported
+Mono8, Mono10, Mono12, Mono14, Mono16
+BayerXX8, BayerXX10, BayerXX12, BayerXX14, BayerXX16 where XX = GR, RG, GB, or BG
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+10/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+RGB8, RGB10, RGB12, RGB14, RGB16
+RGBA8, RGBA10, RGBA12, RGBA14, RGBA16
+YCbCr601_422_8, YCbCr601_422_10
+YCbCr709_422_8, YCbCr709_422_10
+YUV422_8, YUV422_10
+Raw
+
+Area-scan camera control
+Trigger
+Precise control of asynchronous reset cameras, with exposure control.
+Support of camera exposure/readout overlap.
+Support of external hardware trigger, with optional delay and trigger decimation.
+
+Strobe
+Accurate control of the strobe position for strobed light sources.
+Support of early and late strobe pulses.
+
+Line-scan camera control
+Scan/page trigger
+Precise control of start-of-scan and end-of-scan triggers.
+Support of external hardware trigger, with optional delay.
+Support of infinite acquisition, without missing line, for web inspection applications.
+
+Line trigger
+Support for quadrature motion encoders, with programmable noise filters, selection of acquisition direction and
+backward motion compensation.
+Rate Converter tool for fine control of the pixel aspect ratio: Rate Conversion Ratio in the range 0.001 to 1000 with
+an accuracy better than 0.1%.
+Rate Divider tool
+
+Line strobe
+Accurate control of the strobe position for strobed light sources.
+
+On-board processing
+On-board memory
+4 GB
+
+Image data stream processing
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+11/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Unpacking of 10-/12-/14-bit to 16-bit with selectable justification to LSb or MSb
+Optional swap of R and B components
+Little endian conversion
+
+Flat-field correction
+Only available with the '1-camera' and '1-camera, line-scan' firmware variants
+
+Input LUT (Lookup Table)
+Monochrome 8-bit to 8-bit transformation
+Monochrome 10-bit to 8-, 10- or 16-bit transformations
+Monochrome 12-bit to 8-, 12- or 16-bit transformations
+
+Bayer CFA to RGB decoder
+'1-camera' firmware variant:
+3x3 linear interpolation method
+3x3 median-based interpolation method
+
+Pixel binning
+Only available with the '1-camera' and '1-camera, line-scan' firmware variants
+2x2 and 4x4 binning windows
+Bypass, sum and mean methods
+
+Data stream statistics
+Measurement of:
+Frame rate (Area-scan only)
+Line rate
+Data rate
+Configurable averaging interval
+
+Event signaling and counting
+The application software can be notified of the occurrence of various events:
+Standard event: the EVENT_NEW_BUFFER event notifies the application of newly filled buffers
+A large set of custom events
+
+Custom events sources:
+I/O Toolbox events
+Camera and Illumination control events
+CoaXPress data stream events
+CoaXPress host interface events
+Each custom event is associated with a 32-bit counter that counts the number of occurrences
+
+The last three 32-bit context data words of the event context data can be configured with event-specific context
+data:
+Event-specific data
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+12/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+State of all System I/O lines sampled at the event occurrence time
+Value of any event counter
+
+General Purpose Inputs and Outputs
+Number of lines
+20 I/O lines:
+4 differential inputs (DIN)
+4 singled-ended TTL inputs/outputs (TTLIO)
+8 isolated inputs (IIN)
+4 isolated outputs (IOUT)
+NOTE: The number of I/O lines can be extended using I/O modules attached to the I/O EXTENSION connector.
+
+Usage
+Any I/O input lines can be used by any LIN tool of the I/O Toolbox
+Selected pairs of I/O input lines can be used by any QDC tool of the I/O toolbox to decode A/B signals of a motion
+encoder
+
+Electrical specifications
+DIN: High-speed differential inputs, up to 5 MHz, compatible with ANSI/EIA/TIA-422/485 differential line drivers
+and complementary TTL drivers
+TTLIO: High-speed 5V-compliant TTL inputs or LVTTL outputs, compatible with totem-pole LVTTL, TTL, 5V CMOS
+drivers or LVTTL, TTL, 3V CMOS receivers
+IIN: 200 kHz isolated current-sense input with wide voltage input range up to 30V, compatible with totem-pole
+(push-pull) HTL drivers, 5V TTL/RS-422 differential line drivers, 5V CMOS drivers, potential free contacts, solidstate relays and opto-couplers
+IOUT: Isolated contact outputs compatible with 30V / 100mA loads
+NOTE: IIN and IOUT lines provide a functional isolation grade for the circuit technical protection. It does not provide
+an isolation that can protect a human being from electrical shock!
+
+Filter control
+Glitch removal filter available on all System I/O input lines
+
+Configurable filter delay:
+Custom value
+Fixed values for DIN and TTLIO lines: 50 ns, 100 ns, 200 ns, 500 ns, 1 µs
+Fixed values for IIN lines: 500 ns, 1 µs, 2 µs, 5 µs, 10 µs
+
+Polarity control
+Yes
+
+Power output
+Non-isolated, +12V, 1A, with electronic fuse protection
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+13/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+I/O Toolbox tools
+The I/O Toolbox is a configurable interconnection of tools that generates events (usually triggers):
+Line Input tool (LIN): edge detector delivering events on rising or falling edges of any selected input line.
+
+Quadrature Decoder tool (QDC): a composite tool including:
+A quadrature edge detector delivering events on selected transitions of selected pairs of input lines.
+An optional backward motion compensator for clean line-scan image acquisition when the motion is
+unstable.
+A 32-bit up/down counter for delivering a position value.
+Device Link Trigger tool (DLT): delivers an event on reception of a valid high-speed CoaXPress 2.0 connection
+trigger packet message from the remote device.
+User Actions Scheduler tool (UAS): to delegate the execution of 'User Actions' at a scheduled time or encoder
+position. Possible user actions include setting low/high/toggle any bit of the User Output Register or generation of
+any User Events.
+Delay tool (DEL): to delay up to 16 events from one or two I/O toolbox event sources, by a programmable time or
+number of motion encoder ticks (any QDC events).
+Divider tool (DIV): to generate an event every nth input events from any I/O toolbox event source.
+Multiplier/divider tool (MDV): to generate m events every d input events from any I/O toolbox event source.
+
+The 'Input Tools' (LIN, QDC, DLT and UAS) can be further processed by the 'Event Tools' (DEL, DIV and MDV) to
+generate any of the following "trigger" events:
+The "cycle trigger" of the Camera and Illumination controller
+The "cycle sequence trigger" of the Camera and Illumination controller
+The "start-of-scan trigger" of the Acquisition Controller (line-scan only)
+The "end-of-scan trigger" of the Acquisition Controller (line-scan only)
+
+I/O Toolbox composition
+Determined by the selected firmware variant:
+'1-camera': 8 LIN, 1 QDC, 2 DLT, 1 UAS, 2 DEL, 1 DIV, 1 MDV, 2 C2C
+'2-camera': 8 LIN, 1 QDC, 4 DLT, 1 UAS, 2 DEL, 1 DIV, 1 MDV, 2 C2C
+'4-camera': 8 LIN, 4 QDC, 8 DLT, 1 UAS, 2 DEL, 4 DIV, 4 MDV, 2 C2C
+'1-camera, line-scan': 8 LIN, 1 QDC, 2 DLT, 1 UAS, 2 DEL, 1 DIV, 1 MDV, 3 C2C
+'2-camera, line-scan': 8 LIN, 2 QDC, 4 DLT, 1 UAS, 2 DEL, 2 DIV, 2 MDV, 3 C2C
+'4-camera, line-scan': 8 LIN, 4 QDC, 8 DLT, 1 UAS, 4 DEL, 4 DIV, 4 MDV, 3 C2C
+
+C2C-Link
+Description
+Accurate synchronization of the trigger and the start-of-exposure of multiple grabber-controlled area-scan
+cameras.
+Accurate synchronization of the start-of-cycle, start-of-scan and end-of-scan of multiple grabber-controlled linescan cameras.
+
+Specification
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+14/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+C2C-Link synchronizes cameras connected to:
+the same card
+to different cards in the same PC (requires an accessory cable such as the "3303 C2C-Link Ribbon Cable" or a
+custom-made C2C-Link cable)
+to different cards in different PCs (requires one "1636 InterPC C2C-Link Adapter" for each PC and one RJ 45
+CAT 5 STP straight LAN cable for each adapter but the last one)
+
+Maximum distance:
+120 cm inside a PC
+1200 m cumulated adapter to adapter cable length
+
+Maximum trigger rate:
+2.5 MHz for configurations using a single PC, or up to 10 PCs and 100 m total C2C-Link cable length
+200 kHz for configurations up to 32 PCs and 1200m total C2C-Link cable length
+
+Trigger propagation delay from master to slave devices:
+Less than 10 ns for cameras on the same card or on different cards in the same PC
+Less than 265 ns for cameras on different cards in different PCs (3 PCs and 40m total C2C-Link cable length)
+
+Software
+Driver name
+eGrabber
+
+First release
+eGrabber 23.08
+
+Current release
+eGrabber 26.02
+
+Host PC Operating System
+Microsoft Windows 11, 10 for x86-64 (64-bit) processor architecture
+Linux for x86-64 (64-bit) and AArch64 (64-bit) processor architectures
+macOS for x86-64 (64-bit) and AArch64 (64-bit) processor architectures
+
+APIs
+EGrabber class, with C++ and .NET APIs: .NET assembly designed to be used with development environments
+compatible with .NET frameworks version 4.6 or higher
+
+GenICam GenTL producer libraries compatible with C/C++ compilers:
+'x86_64' dynamic library designed to be used with ISO-compliant C/C++ compilers for the development of
+x86-64 (64-bit) applications
+'aarch64' dynamic library designed to be used with ISO-compliant C/C++ compilers for the development of
+AArch64 (64-bit) applications
+
+Memento supported
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+15/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Yes
+
+Environmental conditions
+Operating ambient air temperature
+0°C to +55°C / +32°F to +131°F
+
+Operating ambient air humidity
+10% to 90% RH non-condensing
+
+Storage ambient air temperature
+-20°C to +70°C/ -4°F to +158°F
+
+Storage ambient air humidity
+10% to 90% RH non-condensing
+
+Certifications
+EMC standards
+European Council EMC Directive 2014/30/EU
+United States FCC CFR Title 47 Part 15B
+
+EMC - Emission
+EN 55032:2015 / CISPR 32:2012 Class B
+FCC CFR Title 47 Part 15B Class B
+
+EMC - Immunity
+EN 55024:2010 / CISPR 24:2010
+EN 55035:2017 / CISPR 35:2016
+EN 61000-4-2:2009
+EN 61000-4-3:2006
+EN 61000-4-4:2004
+EN 61000-4-6:2014
+
+KC Certification
+Korean Radio Waves Act, Article 58-2, Clause 3
+
+Flammability
+PCB compliant with UL 94 V-0
+
+RoHS
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+16/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+European Union Directive 2015/863 (ROHS3)
+
+REACH
+European Union Regulation 1907/2006
+
+WEEE
+Must be disposed of separately from normal household waste and must be recycled according to local regulations
+
+Ordering Information
+Product status
+Released
+
+Product code - Description
+PC3623 Coaxlink Quad CXP-12 Value
+
+Related products
+PC1625 DB25F I/O Adapter Cable
+PC1636 InterPC C2C-Link Adapter
+PC3303 C2C-Link Ribbon Cable
+PC3304 HD26F I/O Adapter Cable
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+17/18
+
+3/25/26, 8:35 AM
+
+Coaxlink Quad CXP-12 Value - CoaXPress Frame Grabbers - Euresys
+
+Coaxlink Quad CXP-12 Value
+
+Offices
+Europe, Middle East & Africa
+Euresys SA
+
+Contact support : support.europe@euresys.com
+Allied Vision Schongau
+
+Contact support : sales@alliedvision.com
+China
+Euresys Shanghai Liaison Office
+
+Contact support : support.china@euresys.com
+Euresys Shenzhen Liaison Office
+
+Contact support : support.china@euresys.com
+Japan
+Euresys Japan K.K.
+
+Contact support : support.japan@euresys.com
+South Korea
+Euresys South Korea Liaison Office
+
+Contact support : support.korea@euresys.com
+Asia (other countries)
+Euresys Pte. Ltd.
+
+Contact support : support.asia@euresys.com
+North, Central & South America
+Euresys Inc.
+
+Contact support : support.usa@euresys.com
+TKH Vision Experience Center
+
+Contact support : support.usa@euresys.com
+
+https://www.euresys.com/en/products/frame-grabber/coaxlink-quad-cxp-12-value/
+
+18/18
+
+

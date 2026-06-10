@@ -1,0 +1,95 @@
+@startuml
+title PDE Physical Chain - Single SLM/Camera Capture Sequence (Development Mode)
+
+actor "Application" as App
+participant "PDEPhysicalChain\n(Main Thread)" as PDE
+participant "Worker\nThread" as Worker
+participant "SLMController\n(Singleton)" as SLM
+box "Hardware" #LightBlue
+participant "SLM\nHardware" as SLM_HW
+end box
+participant "Camera" as Cam
+participant "Frame Grabber\n(DMA Pool)" as DMA
+participant "Frame\n(RAII)" as Frame
+
+note over PDE : State: Ready\n(acquisition started,\nDMA buffers allocated)
+note over SLM : Single SLM mode\n(dev/test configuration)
+
+== Capture Request ==
+App -> PDE : setSLMCaptureCamera\n(slm_data, nullptr)
+activate PDE
+note right of PDE : State: Ready → First_SLM_write
+
+PDE -> Worker : executeOnWorker\n(lambda with SDK calls)
+activate Worker
+note right of Worker : All SDK access\nserialized here\n(SDK not thread-safe)
+
+== Write SLM ==
+Worker -> SLM : writeImage(SLM, data)
+activate SLM
+note right of SLM : PCIe DMA\n(~1ms)
+SLM -> SLM_HW : DMA transfer
+activate SLM_HW
+SLM --> Worker : DMA complete
+deactivate SLM
+
+Worker -> SLM : ImageWriteComplete(SLM)
+activate SLM
+note right of SLM : Wait for SLM\nto stabilize
+SLM_HW -> SLM_HW : pixel flip\n+ settling\n(~1ms)
+SLM_HW --> SLM : stable
+SLM --> Worker : image stable
+deactivate SLM
+
+note right of PDE : State: First_SLM_write\n→ Capture
+
+== Hardware Trigger from SLM ==
+SLM_HW -> Cam : **Hardware Trigger Pulse**\n(from SLM output)
+deactivate SLM_HW
+
+note right of Cam : Built-in delay\nconfigured via\nsetTriggerDelay()\nensures SLM settled
+
+== Camera Capture (Zero-Copy) ==
+Worker -> Cam : grabFrameZeroCopy()
+activate Cam
+Cam -> DMA : capture to pool
+activate DMA
+note right of DMA : DMA to buffer\n(locks one buffer)
+DMA --> Cam : ScopedBuffer
+deactivate DMA
+
+Cam -> Frame ** : create Frame\n(unique_ptr<ScopedBuffer>)
+activate Frame
+note right of Frame : Ownership transfer:\nDMA buffer → Frame\n(RAII pattern)
+
+Cam --> Worker : Frame
+deactivate Cam
+
+Worker --> PDE : CaptureResult\n{camera1_frame}
+deactivate Worker
+
+note right of PDE : State: Capture → Ready\n(ready for next capture)
+
+PDE --> App : CaptureResult
+deactivate PDE
+
+== Frame Processing ==
+activate App
+note right of App : Application owns Frame\n(zero-copy access)
+
+App -> Frame : getData(), process()
+activate Frame
+Frame --> App : void* (DMA buffer)
+deactivate Frame
+
+note right of App : Process image
+
+App -> App : Frame destroyed\n(goes out of scope)
+deactivate App
+
+destroy Frame
+note right of Frame : RAII destructor:\nReleases buffer\nback to DMA pool
+
+note over DMA : Buffer available\nfor next capture
+
+@enduml
